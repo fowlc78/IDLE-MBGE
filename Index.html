@@ -2,41 +2,12 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Mon Idle MBGE</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-    }
-    
-    body {
-      background-color: white;
-    }
-    
-    #activities {
-      background-image: url('images/mbgegang.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      background-color: white;
-      min-height: 400px; /* Hauteur minimale pour voir l'image */
-      padding: 20px;
-      margin: 10px;
-    }
-
-    #inventory, #global-level {
-      background-color: rgba(255, 255, 255, 0.9);
-      padding: 20px;
-      margin: 10px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-    }
-  </style>
+  <title>Idle MBGE</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <h1>Mon premier Idle Game (avec drops et inventaire)</h1>
+  <h1 style="text-align: center;">IDLE MBGE</h1>
 
   <!-- Boutons pour lancer/arrêter les activités -->
   <div id="activities">
@@ -49,7 +20,7 @@
       <div id="DEV-info"></div>
     </div>
     <div>
-      <img src="images/LOL.jpg" 
+      <img src="images/LOL.jpeg" 
            alt="Commencer LOL" 
            onclick="startActivity('LOL')" 
            style="cursor: pointer; width: 100px; height: 100px;"

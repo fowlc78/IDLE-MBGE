@@ -689,6 +689,7 @@ function updateProgressBar(activityName) {
   const activityImg = document.querySelector(`img[alt="Commencer ${activityName}"]`);
   if (!activityImg) return;
 
+  // Crée ou récupère la barre de progression
   let progressBar = document.querySelector(`#progress-${activityName}`);
   if (!progressBar) {
     progressBar = document.createElement('div');
@@ -702,7 +703,7 @@ function updateProgressBar(activityName) {
       width: ${imgWidth}px;
       height: 5px;
       background-color: #ddd;
-      margin-bottom: 5px;
+      margin-top: 5px;
       border-radius: 3px;
       overflow: hidden;
     `;
@@ -718,8 +719,8 @@ function updateProgressBar(activityName) {
 
     progressBar.appendChild(progressFill);
     
-    // Insère la barre juste avant l'image
-    activityImg.parentNode.insertBefore(progressBar, activityImg);
+    // Insère la barre après l'image
+    activityImg.parentNode.insertBefore(progressBar, activityImg.nextSibling);
   }
 
   let progress = 0;
@@ -860,3 +861,152 @@ function updateUI() {
 // Initialisation de l'interface au chargement
 updateUI();
 updateInventoryUI();
+
+// Gestion des joueurs et sauvegarde
+let currentPlayer = null;
+let leaderboard = [];
+
+/**
+ * Sauvegarde les données du joueur actuel
+ */
+function saveGame() {
+    if (!currentPlayer) return;
+    
+    const gameData = {
+        player: currentPlayer,
+        activities: activitiesData,
+        inventory: inventory,
+        currentActivity: currentActivity,
+        streaks: activitiesStreaks,
+        lastSaved: new Date().getTime()
+    };
+    
+    localStorage.setItem(`idleGame_${currentPlayer}`, JSON.stringify(gameData));
+    updateLeaderboard();
+}
+
+/**
+ * Met à jour le classement
+ */
+function updateLeaderboard() {
+    leaderboard = JSON.parse(localStorage.getItem('idleGame_leaderboard') || '[]');
+    
+    const playerScore = {
+        name: currentPlayer,
+        level: getGlobalLevel(activitiesData),
+        lastUpdate: new Date().getTime()
+    };
+    
+    const existingIndex = leaderboard.findIndex(p => p.name === currentPlayer);
+    if (existingIndex !== -1) {
+        leaderboard[existingIndex] = playerScore;
+    } else {
+        leaderboard.push(playerScore);
+    }
+    
+    leaderboard.sort((a, b) => b.level - a.level);
+    localStorage.setItem('idleGame_leaderboard', JSON.stringify(leaderboard));
+    displayLeaderboard();
+}
+
+/**
+ * Charge la partie d'un joueur
+ */
+function loadGame(playerName) {
+    const savedData = localStorage.getItem(`idleGame_${playerName}`);
+    if (savedData) {
+        const gameData = JSON.parse(savedData);
+        currentPlayer = gameData.player;
+        activitiesData = gameData.activities;
+        inventory = gameData.inventory;
+        currentActivity = gameData.currentActivity;
+        activitiesStreaks = gameData.streaks;
+        
+        if (currentActivity) {
+            updateProgressBar(currentActivity);
+        }
+        
+        updateUI();
+        updateInventoryUI();
+    }
+}
+
+/**
+ * Affiche l'interface de connexion
+ */
+function displayLoginUI() {
+    const loginDiv = document.createElement('div');
+    loginDiv.className = 'login-container';
+    loginDiv.innerHTML = `
+        <h2>Connexion / Inscription</h2>
+        <input type="text" id="playerName" placeholder="Nom du joueur">
+        <button onclick="loginPlayer()">Jouer</button>
+        <div id="playerList">
+            <h3>Parties existantes</h3>
+            ${getExistingPlayers().map(player => 
+                `<button onclick="loadGame('${player}')">${player}</button>`
+            ).join('')}
+        </div>
+    `;
+    document.body.insertBefore(loginDiv, document.body.firstChild);
+}
+
+/**
+ * Affiche le classement
+ */
+function displayLeaderboard() {
+    let leaderboardDiv = document.getElementById('leaderboard');
+    if (!leaderboardDiv) {
+        leaderboardDiv = document.createElement('div');
+        leaderboardDiv.id = 'leaderboard';
+        document.body.appendChild(leaderboardDiv);
+    }
+    
+    leaderboardDiv.innerHTML = `
+        <h2>Classement Global</h2>
+        <table>
+            <tr><th>Rang</th><th>Joueur</th><th>Niveau Global</th></tr>
+            ${leaderboard.map((player, index) => `
+                <tr class="${player.name === currentPlayer ? 'current-player' : ''}">
+                    <td>${index + 1}</td>
+                    <td>${player.name}</td>
+                    <td>${player.level}</td>
+                </tr>
+            `).join('')}
+        </table>
+    `;
+}
+
+/**
+ * Récupère la liste des joueurs existants
+ */
+function getExistingPlayers() {
+    return Object.keys(localStorage)
+        .filter(key => key.startsWith('idleGame_'))
+        .map(key => key.replace('idleGame_', ''))
+        .filter(key => key !== 'leaderboard');
+}
+
+/**
+ * Connecte un joueur
+ */
+function loginPlayer() {
+    const playerName = document.getElementById('playerName').value.trim();
+    if (playerName) {
+        currentPlayer = playerName;
+        loadGame(playerName);
+        document.querySelector('.login-container').style.display = 'none';
+    }
+}
+
+// Sauvegarde automatique
+setInterval(saveGame, 30000);
+
+// Sauvegarde avant fermeture
+window.addEventListener('beforeunload', saveGame);
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+    displayLoginUI();
+    updateLeaderboard();
+});
