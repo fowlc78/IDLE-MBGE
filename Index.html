@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mon Idle MBGE</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    
+    body {
+      background-color: white;
+    }
+    
+    #activities {
+      background-image: url('images/mbgegang.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-color: white;
+      min-height: 400px; /* Hauteur minimale pour voir l'image */
+      padding: 20px;
+      margin: 10px;
+    }
+
+    #inventory, #global-level {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      margin: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Mon premier Idle Game (avec drops et inventaire)</h1>
+
+  <!-- Boutons pour lancer/arrêter les activités -->
+  <div id="activities">
+    <div>
+      <img src="images/DEV.jpeg" 
+           alt="Commencer DEV" 
+           onclick="startActivity('DEV')" 
+           style="cursor: pointer; width: 100px; height: 100px;"
+      >
+      <div id="DEV-info"></div>
+    </div>
+    <div>
+      <img src="images/LOL.jpg" 
+           alt="Commencer LOL" 
+           onclick="startActivity('LOL')" 
+           style="cursor: pointer; width: 100px; height: 100px;"
+      >
+      <div id="LOL-info"></div>
+    </div>
+    <div>
+      <img src="images/Musique.jpeg" 
+           alt="Commencer Musique" 
+           onclick="startActivity('Musique')" 
+           style="cursor: pointer; width: 100px; height: 100px;"
+      >
+      <div id="Musique-info"></div>
+    </div>
+    <div>
+      <img src="images/Fruitz.jpeg" 
+           alt="Commencer Fruitz" 
+           onclick="startActivity('Fruitz')" 
+           style="cursor: pointer; width: 100px; height: 100px;"
+      >
+      <div id="Fruitz-info"></div>
+    </div>
+    <div>
+      <img src="images/Couisine.jpeg" 
+           alt="Commencer Couisine" 
+           onclick="startActivity('Couisine')" 
+           style="cursor: pointer; width: 100px; height: 100px;"
+      >
+      <div id="Couisine-info"></div>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- Affichage du niveau global -->
+  <div id="global-level"></div>
+
+  <hr />
+
+  <!-- Inventaire -->
+  <h2>Inventaire</h2>
+  <div id="inventory"></div>
+
+  <!-- Lien vers notre script principal -->
+  <script src="script.js"></script>
+</body>
+</html>
